@@ -1,0 +1,17 @@
+{
+  "name": "nemMosaicReader",
+  "short_name": "nemMozReader",
+  "description": "read mosaic amount from QR coded address",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF",
+  "theme_color": "#FFF",
+  "icons": [
+    {
+      "src": "./logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

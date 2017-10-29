@@ -1,0 +1,85 @@
+@media screen and (min-width: 450px)  {
+  #app { width: 420px; }
+}
+body {
+  font-family: monospace;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  color: #222;
+  font-size: 0.9rem;
+}
+#app {
+  position: relative;
+  height: 100vh;
+}
+#switch {
+  position: fixed;
+  width: 140px;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: #333 solid 1px;
+  border-radius: 4px;
+  line-height: 1.2;
+  font-size: 14px;
+}
+#close {
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: #333 solid 1px;
+  border-radius: 4px;
+  line-height: 1.2;
+  font-size: 14px;
+}
+#capture { width: 100%; }
+#scanner { background-color: #000; }
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  background-color: rgba(200, 200, 200, 0.80);
+  height: 100vh;
+  width: 100%;
+  padding: 8px;
+}
+#overlay.active {
+  display: flex;
+  justify-content: center;
+  padding: 16px 8px;
+}
+#modal {
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  width: 86%;
+  background-color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.2);
+}
+#address {
+  font-weight: bold;
+}
+#mosaics {
+  flex-grow: 1;
+  flex-basis: 0;
+  overflow-y: scroll;
+  padding: 4px;
+}
+#mosaics > dl {
+  margin: 0;
+  padding-left: 0;
+}
+#mosaics > dl > dt {
+}
+#mosaics > dl > dd {
+  font-weight: bold;
+  margin-left: 0;
+  text-align: right;
+  border-bottom: 1px solid #222;
+}

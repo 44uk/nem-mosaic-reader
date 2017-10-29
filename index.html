@@ -5,23 +5,23 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 <title>nemMosaicScanner</title>
-<style>
-body { margin: 0; }
-#scanner { background-color: #000; }
-
-#modal {
-  background-color: #fff;
-  padding: 8px;
-}
-</style>
+<link rel="stylesheet" href="main.css" />
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
-<div id="mount"></div>
-<div id="modal">
-  <p>You have these mosaics!</p>
-  <div id="mosaics"></div>
+<div id="app">
+  <video id="capture"></video>
+  <!--button id="switch">Switch Camera</button-->
 </div>
-<script src="instascan.min.js"></script>
+<div id="overlay">
+  <div id="modal">
+    <div style="padding:4px">You have these mosaics!</div>
+    <div style="padding:4px" id="address"></div>
+    <div id="mosaics"></div>
+    <button id="close">Close</button>
+  </div>
+</div>
+<script src="vendor/instascan.min.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
