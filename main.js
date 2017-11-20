@@ -7,37 +7,21 @@ function getMosaic(mosaics, ns, name) {
 
 var app = document.getElementById('app');
 var video = document.getElementById('capture');
+var address = document.getElementById('address');
+var mosaics = document.getElementById('mosaics');
 var closeBtn = document.getElementById('close');
 var cameras = null;
 var cameraIdx = 0;
-var address = document.getElementById('address');
-var mosaics = document.getElementById('mosaics');
-var scanner = new Instascan.Scanner({
-  video: video,
-  mirror: false
-});
-
-// var switchBtn = document.getElementById('switch');
-// switchBtn.addEventListener('click', function(ev) {
-//   if(cameraIdx == cameras.length-1) {
-//     cameraIdx = 0;
-//   } else {
-//     cameraIdx += 1;
-//   }
-//   scanner.stop();
-//   scanner.start(cameras[cameraIdx]);
-// });
-
-closeBtn.addEventListener('click', function(ev) {
-  mosaics.innerHTML = '';
-  scanner.start(cameras[cameraIdx]);
-  overlay.classList.remove('active');
-});
+var scanner = new Instascan.Scanner({video: video, mirror: false});
 
 scanner.addListener('active', function() {
 });
 scanner.addListener('deactive', function() {
 });
+
+function getEndpoint(network) {
+  return 'https://nis-' + network + '.44uk.net:7891'
+}
 
 function props2obj(props) {
   var obj = {};
@@ -45,11 +29,18 @@ function props2obj(props) {
   return obj;
 }
 
+closeBtn.addEventListener('click', function(ev) {
+  mosaics.innerHTML = '';
+  scanner.start(cameras[cameraIdx]);
+  overlay.classList.remove('active');
+});
+
 scanner.addListener('scan', function(content) {
   var addr = JSON.parse(content).data.addr;
   var network = addr[0] === 'N' ? 'mainnet' : 'testnet';
+  var endpoint = getEndpoint(network);
   scanner.stop();
-  fetch('https://nis-' + network + '.44uk.net:7891/account/mosaic/owned?address=' + addr)
+  fetch(endpoint + '/account/mosaic/owned?address=' + addr)
   .then(function(res) { return res.json(); })
   .then(function(res) {
     var mosaics = res.data;
@@ -65,7 +56,7 @@ scanner.addListener('scan', function(content) {
           quantity: el.quantity
         });
       } else {
-        return fetch('https://nis-' + network + '.44uk.net:7891/namespace/mosaic/definition/page?namespace=' + mo.namespaceId)
+        return fetch(endpoint + '/namespace/mosaic/definition/page?namespace=' + mo.namespaceId)
         .then(function(res) { return res.json(); })
         .then(function(res) {
           var moDefs = res.data;
@@ -91,7 +82,8 @@ scanner.addListener('scan', function(content) {
         var mo = el.id;
         var dt = document.createElement('dt');
         var dd = document.createElement('dd');
-        dt.innerText = mo.namespaceId + ':' + mo.name;
+        var fqn = mo.namespaceId + ':' + mo.name;
+        dt.innerText = fqn;
         dd.innerText = el.quantity / Math.pow(10, el.divisibility);
         dl.appendChild(dt);
         dl.appendChild(dd);
@@ -127,3 +119,25 @@ Instascan.Camera.getCameras()
     alert(err)
   })
 ;
+
+// preparing
+var MOSAIC_ICON_BASE_URL = 'https://s3-ap-northeast-1.amazonaws.com/xembook.net/garally/';
+var MOSAIC_ICON_DEFS = {
+  'tomato:ripe': 'tomato_ripe.jpg',
+  'nembear:waribikiken': 'nembear_waribikiken.jpg',
+  'nembear:832': 'nembear_832.jpg',
+  'puchikun:spthx': 'puchikun_spthx.jpg',
+  'nice:art': 'nice_art.jpg',
+  'namuyan:nemrin': 'namuyan_nemrin.png',
+  'namuyan:nekonium': 'namuyan_nekonium.png',
+  'kobun:kurofuku': 'kobun_kurofuku.jpg',
+  'hi:coin': 'hi_coin.jpg',
+  'hi.happy_nem:nem': 'hi_happy_nem_nem.jpg',
+  'lovenem:lovenem': 'lovenem_lovenem.jpg',
+  'nem_holder:gachiho': 'nem_holder_gachiho.png',
+  'hamada:jun': 'hamada_jun.png'
+};
+function getIconURL(fqn) {
+  var filename = MOSAIC_ICON_DEFS[fqn]
+  return MOSAIC_ICON_BASE_URL + (filename || 'tomato_ripe.jpg');
+}
