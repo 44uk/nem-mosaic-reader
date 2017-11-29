@@ -81,9 +81,11 @@ scanner.addListener('scan', function(content) {
     .map(function(el) {
       var mo = el.mosaicId;
       var divisibility = localStorage.getItem(mo.namespaceId + ':' + mo.name + '.divisibility');
+      var description = localStorage.getItem(mo.namespaceId + ':' + mo.name + '.description');
       if(divisibility) {
         return Promise.resolve({
           id: mo,
+          description: description,
           divisibility: divisibility,
           quantity: el.quantity
         });
@@ -97,8 +99,10 @@ scanner.addListener('scan', function(content) {
           })[0];
           var obj = props2obj(moDef.mosaic.properties);
           localStorage.setItem(mo.namespaceId + ':' + mo.name + '.divisibility', obj.divisibility);
+          localStorage.setItem(mo.namespaceId + ':' + mo.name + '.description', moDef.mosaic.description);
           return Promise.resolve({
             id: moDef.mosaic.id,
+            description: moDef.mosaic.description,
             divisibility: obj.divisibility,
             quantity: el.quantity
           });
@@ -109,19 +113,20 @@ scanner.addListener('scan', function(content) {
   .then(function(result) {
     // DEBUG: dummy injection
     // result = result.concat([
-    //   {id: {namespaceId: 'tomato', name: 'ripe'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'nembear', name: 'waribikiken'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'nembear', name: '832'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'puchikun', name: 'spthx'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'nice', name: 'art'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'namuyan', name: 'nemrin'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'namuyan', name: 'nekonium'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'kobun', name: 'kurofuku'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'hi', name: 'coin'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'lovenem', name: 'lovenem'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'nem_holder', name: 'gachiho'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'hamada', name: 'jun'}, quantity: 100, divisibility: 0 },
-    //   {id: {namespaceId: 'nemket.nemket2017', name: 'entry'}, quantity: 100, divisibility: 0 }
+    //   {id: {namespaceId: 'tomato', name: 'ripe'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'nembear', name: 'waribikiken'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'nembear', name: '832'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'puchikun', name: 'spthx'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'nice', name: 'art'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'namuyan', name: 'nemrin'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'namuyan', name: 'nekonium'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'kobun', name: 'kurofuku'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'hi', name: 'coin'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'lovenem', name: 'lovenem'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'nem_holder', name: 'gachiho'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'hamada', name: 'jun'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'nemket.nemket2017', name: 'entry'}, quantity: 100, divisibility: 0, description: '' },
+    //   {id: {namespaceId: 'foo.bar.baz', name: 'qux'}, quantity: 10, divisibility: 0, description: 'oa:4bfbe68e4b15ef0ea48e0a8486f6e00ebf34b8efb3581af243d8b589e4dfb72e' }
     // ]);
 
     if(result) {
@@ -133,13 +138,21 @@ scanner.addListener('scan', function(content) {
         var mo = el.id;
         var fqn = mo.namespaceId + ':' + mo.name;
         var url = getImageURL(fqn);
-        if(url) {
+
+        // fetch from  OpenApostille
+        if(el.description.indexOf('oa:') === 0) {
+          var hash = el.description.split(':')[1];
+          url = 'https://s3.amazonaws.com/open-apostille-nemgallary-production/' + hash + '.jpg';
+        }
+
+        if (url) {
           var dt2 = document.createElement('dt');
           dt2.classList.add('image');
           dt2.style.backgroundImage = 'url("' + url + '")';
           dt2.style.height = 240 + 'px';
           dl.appendChild(dt2);
         }
+
         dt.innerText = fqn;
         dd.innerText = el.quantity / Math.pow(10, el.divisibility);
         dl.appendChild(dt);
