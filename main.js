@@ -11,7 +11,7 @@ function getParams() {
   var obj = {};
   vars.forEach(function(v, i) {
     var pair = v.split('=');
-    obj[pair[0]] = pair[1];
+    obj[pair[0]] = decodeURIComponent(pair[1]);
   });
   return obj;
 }
@@ -82,7 +82,7 @@ scanner.addListener('scan', function(content) {
       var mo = el.mosaicId;
       var divisibility = localStorage.getItem(mo.namespaceId + ':' + mo.name + '.divisibility');
       var description = localStorage.getItem(mo.namespaceId + ':' + mo.name + '.description');
-      if(divisibility) {
+      if(description) {
         return Promise.resolve({
           id: mo,
           description: description,
