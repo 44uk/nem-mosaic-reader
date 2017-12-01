@@ -4,7 +4,7 @@ QRコードのアドレスを読み込んで、そのアドレスの持つモザ
 
 現状のモバイルウォレットのモザイク未対応やNEMPayの正式版がリリースされていないことの一時的な対応を目的としています。
 
-![demo gif](https://user-images.githubusercontent.com/370508/33385463-09d0b180-d56c-11e7-99ee-21257cc105d8.gif)
+![demo](https://user-images.githubusercontent.com/370508/33494309-2e640196-d706-11e7-9fb7-85d5033a3caa.gif)
 
 * デモンストレーションのため可分数などが実際の表示とは異なります。
 
