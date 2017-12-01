@@ -10,6 +10,22 @@ body {
   color: #fff;
   background: #222;
 }
+#diag {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  position: absolute;
+  top: 8px;
+  color: #333;
+  background-color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, .2);
+}
+#diag.active {
+  opacity: 1;
+  visibility: visible;
+}
 #app {
   position: relative;
   height: 100vh;

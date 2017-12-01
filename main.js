@@ -17,6 +17,7 @@ function getParams() {
 }
 
 var app = document.getElementById('app');
+var diag = document.getElementById('diag');
 var video = document.getElementById('capture');
 var address = document.getElementById('address');
 var mosaics = document.getElementById('mosaics');
@@ -26,11 +27,6 @@ var cameraIdx = 0;
 var scanner = new Instascan.Scanner({video: video, mirror: false});
 var params = getParams();
 var filter = params['filter'] ? params['filter'].split(',') : [];
-
-scanner.addListener('active', function() {
-});
-scanner.addListener('deactive', function() {
-});
 
 function requestToNode(pathAndParams, network) {
   var url = 'https://nis-'  + network + '.44uk.net:7891' + pathAndParams;
@@ -59,6 +55,15 @@ function isAcceptedMosaic(mosaicId) {
     }
   });
   return flg;
+}
+
+function showMessage(text) {
+  diag.innerText = null;
+  diag.innerText = text;
+  diag.classList.add('active');
+  setTimeout(function() {
+    diag.classList.remove('active');
+  }, 5000);
 }
 
 closeBtn.addEventListener('click', function(ev) {
@@ -168,10 +173,16 @@ scanner.addListener('scan', function(content) {
   })
   .catch(function (err) {
     console.error(err);
-    alert(err)
+    // alert(err)
+    showMessage(err)
     scanner.start(cameras[cameraIdx]);
   })
   ;
+});
+
+scanner.addListener('active', function() {
+});
+scanner.addListener('deactive', function() {
 });
 
 Instascan.Camera.getCameras()
@@ -191,7 +202,7 @@ Instascan.Camera.getCameras()
   })
 ;
 
-// preparing
+// nemgallery definitions
 var MOSAIC_ICON_BASE_URL = 'https://s3-ap-northeast-1.amazonaws.com/xembook.net/gallery/';
 var MOSAIC_ICON_DEFS = {
   'tomato:ripe': 'tomato_ripe.jpg',
