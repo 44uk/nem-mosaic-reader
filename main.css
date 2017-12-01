@@ -11,9 +11,13 @@ body {
   background: #222;
 }
 #diag {
+  z-index: 9;
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  width: 90%;
+  display: flex;
+  justify-content: center;
   position: absolute;
   top: 8px;
   color: #333;

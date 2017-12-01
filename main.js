@@ -73,7 +73,13 @@ closeBtn.addEventListener('click', function(ev) {
 });
 
 scanner.addListener('scan', function(content) {
-  var addr = JSON.parse(content).data.addr;
+  try {
+    var addr = JSON.parse(content).data.addr;
+  } catch(ex) {
+    console.error(ex);
+    showMessage(ex)
+    return false;
+  }
   var network = addr[0] === 'N' ? 'mainnet' : 'testnet';
   scanner.stop();
   requestToNode('/account/mosaic/owned?address=' + addr, network)
