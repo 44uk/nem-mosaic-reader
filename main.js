@@ -57,6 +57,12 @@ function isAcceptedMosaic(mosaicId) {
   return flg;
 }
 
+function sortByMosaicFqn(a, b) {
+  var fqnA = a.id.namespaceId + a.id.name;
+  var fqnB = b.id.namespaceId + b.id.name;
+  return fqnA > fqnB ? 1 : -1;
+}
+
 function showMessage(text) {
   diag.innerText = null;
   diag.innerText = text;
@@ -108,11 +114,12 @@ scanner.addListener('scan', function(content) {
             var id = def.mosaic.id;
             return id.namespaceId === mo.namespaceId && id.name === mo.name;
           })[0];
+          var moId = moDef.mosaic.id;
           var obj = props2obj(moDef.mosaic.properties);
           localStorage.setItem(mo.namespaceId + ':' + mo.name + '.divisibility', obj.divisibility);
           localStorage.setItem(mo.namespaceId + ':' + mo.name + '.description', moDef.mosaic.description);
           return Promise.resolve({
-            id: moDef.mosaic.id,
+            id: moId,
             description: moDef.mosaic.description,
             divisibility: obj.divisibility,
             quantity: el.quantity
@@ -142,6 +149,7 @@ scanner.addListener('scan', function(content) {
 
     if(result) {
       var fg = document.createDocumentFragment();
+      result = result.sort(sortByMosaicFqn);
       result.forEach(function(el) {
         var dl = document.createElement('dl');
         var dt = document.createElement('dt');
@@ -226,7 +234,15 @@ var MOSAIC_ICON_DEFS = {
   'hamada:jun': 'hamada_jun.png',
   'nemket.nemket2017:entry': 'nemket_nemket2017_entry.jpg'
 };
+var MOSAIC_ICON_BASE_URL2 = 'https://s3.amazonaws.com/open-apostille-nemgallary-production/';
+var MOSAIC_ICON_DEFS2 = {
+  'nemicon:nemic': 'e2a7a3ded3c31438a1c45f20392522fbe6224328a35dd3d8ecf32bdc07cf5529.jpg'
+};
 function getImageURL(fqn) {
   var filename = MOSAIC_ICON_DEFS[fqn]
-  return filename ? MOSAIC_ICON_BASE_URL + filename : null;
+  var filename2 = MOSAIC_ICON_DEFS2[fqn]
+  return filename ? MOSAIC_ICON_BASE_URL + filename
+       : filename2 ? MOSAIC_ICON_BASE_URL2 + filename2
+       : null;
+  // return filename ? MOSAIC_ICON_BASE_URL + filename : null;
 }
