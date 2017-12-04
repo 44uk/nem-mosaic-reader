@@ -1,3 +1,22 @@
+'use strict';
+
+// quoted from: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+Promise.properRace = function (promises) {
+  if (promises.length < 1) {
+    return Promise.reject('Can\'t start a race without promises!');
+  }
+  var indexPromises = promises.map(function (p, index) {
+    return p.catch(function () { throw index; });
+  });
+  return Promise.race(indexPromises).catch(function (index) {
+    var p = promises.splice(index, 1)[0];
+    p.catch(function (err) {
+      return console.error(err);
+    });
+    return Promise.properRace(promises);
+  });
+};
+
 function getMosaic(mosaics, ns, name) {
   return mosaics.find(function(el) {
     var mo = el.mosaicId;
@@ -28,9 +47,20 @@ var scanner = new Instascan.Scanner({video: video, mirror: false});
 var params = getParams();
 var filter = params['filter'] ? params['filter'].split(',') : [];
 
+var NODES = {
+  mainnet: [
+    'https://nis-mainnet.44uk.net:7891'
+  ],
+  testnet: [
+    'https://nis-testnet.44uk.net:7891'
+  ]
+}
+
 function requestToNode(pathAndParams, network) {
-  var url = 'https://nis-'  + network + '.44uk.net:7891' + pathAndParams;
-  return fetch(url).then(function(res) { return res.json(); });
+  // var url = 'https://nis-'  + network + '.44uk.net:7891' + pathAndParams;
+  // return fetch(url).then(function(res) { return res.json(); });
+  var fetches = (NODES[network] || []).map(function(url) { return fetch(url); });
+  return Promise.properRace(fetches).then(function(res) { return res.json(); });
 }
 
 function props2obj(props) {
