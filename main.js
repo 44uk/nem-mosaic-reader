@@ -59,7 +59,7 @@ var NODES = {
 function requestToNode(pathAndParams, network) {
   // var url = 'https://nis-'  + network + '.44uk.net:7891' + pathAndParams;
   // return fetch(url).then(function(res) { return res.json(); });
-  var fetches = (NODES[network] || []).map(function(url) { return fetch(url); });
+  var fetches = (NODES[network] || []).map(function(url) { return fetch(url + pathAndParams); });
   return Promise.properRace(fetches).then(function(res) { return res.json(); });
 }
 
@@ -121,8 +121,7 @@ scanner.addListener('scan', function(content) {
   requestToNode('/account/mosaic/owned?address=' + addr, network)
   .then(function(res) {
     var mosaics = res.data;
-    return Promise.all(mosaics
-    .filter(function(el) {
+    return Promise.all(mosaics.filter(function(el) {
       return isAcceptedMosaic(el.mosaicId);
     })
     .map(function(el) {
@@ -234,8 +233,7 @@ Instascan.Camera.getCameras()
     cameras = cams;
     if (cameras.length > 0) {
       cameraIdx = cameras.length-1;
-      cam = cameras[cameraIdx];
-      scanner.start(cam);
+      scanner.start(cameras[cameraIdx]);
     } else {
       console.error('No cameras found.');
       alert('No cameras found.')
