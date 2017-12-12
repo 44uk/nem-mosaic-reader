@@ -10,9 +10,7 @@ Promise.properRace = function (promises) {
   });
   return Promise.race(indexPromises).catch(function (index) {
     var p = promises.splice(index, 1)[0];
-    p.catch(function (err) {
-      return console.error(err);
-    });
+    p.catch(function (err) { return console.error(err); });
     return Promise.properRace(promises);
   });
 };
@@ -49,7 +47,8 @@ var filter = params['filter'] ? params['filter'].split(',') : [];
 
 var NODES = {
   mainnet: [
-    'https://nis-mainnet.44uk.net:7891'
+    'https://nis-mainnet.44uk.net:7891',
+    'https://nis-mainnet2.44uk.net:7891'
   ],
   testnet: [
     'https://nis-testnet.44uk.net:7891'
@@ -57,8 +56,6 @@ var NODES = {
 }
 
 function requestToNode(pathAndParams, network) {
-  // var url = 'https://nis-'  + network + '.44uk.net:7891' + pathAndParams;
-  // return fetch(url).then(function(res) { return res.json(); });
   var fetches = (NODES[network] || []).map(function(url) { return fetch(url + pathAndParams); });
   return Promise.properRace(fetches).then(function(res) { return res.json(); });
 }
