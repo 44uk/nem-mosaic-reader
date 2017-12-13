@@ -47,8 +47,9 @@ var filter = params['filter'] ? params['filter'].split(',') : [];
 
 var NODES = {
   mainnet: [
-    'https://nis-mainnet.44uk.net:7891',
-    'https://nis-mainnet2.44uk.net:7891'
+    // 'https://nis-mainnet.44uk.net:7891',
+    // 'https://nis-mainnet2.44uk.net:7891',
+    'https://nis-mainnet3.44uk.net:7891'
   ],
   testnet: [
     'https://nis-testnet.44uk.net:7891'
@@ -58,6 +59,19 @@ var NODES = {
 function requestToNode(pathAndParams, network) {
   var fetches = (NODES[network] || []).map(function(url) { return fetch(url + pathAndParams); });
   return Promise.properRace(fetches).then(function(res) { return res.json(); });
+  // var fetches = (NODES[network] || []).map(function(url) {
+  //   return fetch(url + '/status')
+  //     .then(function(res) { return res.json(); })
+  //     .then(function(res) {
+  //       if(res.code >= 5) {
+  //         return fetch(url + pathAndParams);
+  //       } else {
+  //         throw res.code;
+  //       }
+  //     })
+  //   ;
+  // });
+  // return Promise.properRace(fetches).then(function(res) { return res.json(); });
 }
 
 function props2obj(props) {
