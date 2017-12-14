@@ -35,13 +35,17 @@ function getParams() {
 
 var app = document.getElementById('app');
 var diag = document.getElementById('diag');
-var video = document.getElementById('capture');
+var preview = document.getElementById('preview');
+var capture = document.getElementById('capture');
+var context = capture.getContext('2d');
+var overlay = document.getElementById('overlay');
+var loading = document.getElementById('loading');
 var address = document.getElementById('address');
 var mosaics = document.getElementById('mosaics');
 var closeBtn = document.getElementById('close');
 var cameras = null;
 var cameraIdx = 0;
-var scanner = new Instascan.Scanner({video: video, mirror: false});
+var scanner = new Instascan.Scanner({video: preview, mirror: false});
 var params = getParams();
 var filter = params['filter'] ? params['filter'].split(',') : [];
 
@@ -105,21 +109,28 @@ function sortByMosaicFqn(a, b) {
 }
 
 function showMessage(text) {
-  diag.innerText = null;
-  diag.innerText = text;
+  diag.textContent = text;
   diag.classList.add('active');
   setTimeout(function() {
+    diag.textContent = null;
     diag.classList.remove('active');
   }, 5000);
 }
 
 closeBtn.addEventListener('click', function(ev) {
+  context.clearRect(0, 0, capture.width, capture.height);
   mosaics.innerHTML = '';
   scanner.start(cameras[cameraIdx]);
   overlay.classList.remove('active');
+  modal.classList.remove('active');
 });
 
 scanner.addListener('scan', function(content) {
+  loading.classList.add('active');
+  overlay.classList.add('active');
+  capture.width = preview.videoWidth;
+  capture.height = preview.videoHeight;
+  context.drawImage(preview, 0, 0);
   try {
     var addr = JSON.parse(content).data.addr;
   } catch(ex) {
@@ -187,6 +198,8 @@ scanner.addListener('scan', function(content) {
     //   {id: {namespaceId: 'foo.bar.baz', name: 'qux'}, quantity: 10, divisibility: 0, description: 'oa:4bfbe68e4b15ef0ea48e0a8486f6e00ebf34b8efb3581af243d8b589e4dfb72e' }
     // ]);
 
+    loading.classList.remove('active');
+    modal.classList.add('active');
     if(result) {
       var fg = document.createDocumentFragment();
       result = result.sort(sortByMosaicFqn);
@@ -220,7 +233,6 @@ scanner.addListener('scan', function(content) {
       });
       mosaics.appendChild(fg);
       address.innerText = addr;
-      overlay.classList.add('active');
     } else {
       alert('No mosaics found in your address');
     }
