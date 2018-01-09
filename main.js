@@ -53,7 +53,7 @@ var NODES = {
   mainnet: [
     // 'https://nis-mainnet.44uk.net:7891',
     // 'https://nis-mainnet2.44uk.net:7891',
-    'https://nis-mainnet3.44uk.net:7891'
+    'https://shibuya.supernode.me:7891'
   ],
   testnet: [
     'https://nis-testnet.44uk.net:7891'
