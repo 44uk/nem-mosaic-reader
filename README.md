@@ -48,7 +48,7 @@ https://44uk.github.io/nem-mosaic-reader?filter=ecobit:eco,dim:coin
 `https`プロトコルを用いるため、`https`対応のNISサーバを自前で立てています。
 
 * https://nis-testnet.44uk.net:7891/status
-* https://nis-mainnet.44uk.net:7891/status
+* https://shibuya.supernode.me:7891/status
 
 nemネットワークのノードにおいて、現状`https`プロトコルを提供するメリットがないため、
 ほとんどのノードは`https`の対応をおこなっていないと思われます。
